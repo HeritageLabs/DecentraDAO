@@ -25,12 +25,16 @@ const NavBar = () => {
         setAddress(account.address);
         setBalance(account.balance);
       } else {
+        if (window.pathname != "/") {
+          toaster.danger("Wallet not connected!");
+          navigate("/");
+        }
+      }
+    } else {
+      if (window.location.pathname != "/") {
         toaster.danger("Wallet not connected!")
         navigate("/");
       }
-    } else {
-      toaster.danger("Wallet not connected!")
-      navigate("/");
     }
   }
 
