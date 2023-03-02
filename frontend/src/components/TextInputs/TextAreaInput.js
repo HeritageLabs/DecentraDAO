@@ -1,0 +1,53 @@
+import { Box, FormLabel, Text, Textarea } from "@chakra-ui/react";
+
+const TextAreaInput = ({ placeholder, type, label, defaultValue, border, borderColor, color, isReadOnly, onChange, value, minLength, maxLength, error }) => {
+  return (
+    <Box>
+      <FormLabel color="brand.dark" fontSize="14px" fontWeight="300" mt="20px">
+        {label}
+      </FormLabel>
+      <Textarea
+        type={type}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+        border={border}
+        h="48px"
+        borderColor={borderColor}
+        focusBorderColor="#1C1CFF"
+        _focus={{ border: "0.1px solid #1C1CFF" }}
+        color={color}
+        isReadOnly={isReadOnly}
+        fontSize="14px"
+        onChange={onChange}
+        value={value}
+        minLength={minLength}
+        maxLength={maxLength}
+      />
+      {error &&
+        <Text color="red">{error}</Text>
+      }
+    </Box>
+  );
+};
+
+export default TextAreaInput;
+
+
+
+// <FormLabel
+// color="brand.dark"
+// fontSize="14px"
+// fontWeight="300"
+// mt="20px"
+// >
+// Proposal details
+// </FormLabel>
+
+// <Textarea
+// type="text"
+// placeholder="What is this proposal for ?"
+// label="Proposal details"
+// color="brand.dark"
+// value={description}
+// onChange={(e) => setDescription(e.target.value)}
+// />

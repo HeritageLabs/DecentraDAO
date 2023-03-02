@@ -92,7 +92,7 @@ contract DAO is ERC20, ERC20Burnable, Ownable {
         uint256 _voteTime,
         address _creator,
         address[] memory _members
-    ) ERC20("DAO", "DAO") {
+    ) ERC20("DecentraDAO", "DDAO") {
         quorum = _quorum;
         voteTime = _voteTime;
         _mint(_creator, 1 * 10**decimals());
@@ -127,7 +127,18 @@ contract DAO is ERC20, ERC20Burnable, Ownable {
     function vote(uint256 id) public onlyMember {
         require(id < proposals.length, "DAO: invalid proposal id!");
         require(!hasVoted[msg.sender][id], "DAO: You've already voted!");
+        hasVoted[msg.sender][id] = true;
         proposals[id].votes += 1;
+    }
+
+    function hasUserVoted(address user, uint256 proposalId)
+        public
+        view
+        returns (bool)
+    {
+        require(isMember(user), "DAO: user is not a member");
+        require(proposalId < proposals.length, "Invalid proposal id");
+        return hasVoted[user][proposalId];
     }
 
     function createProposal(
@@ -136,7 +147,7 @@ contract DAO is ERC20, ERC20Burnable, Ownable {
         string memory proposalType,
         uint256 value,
         address receipient
-    ) public {
+    ) public onlyMember {
         require(
             address(this).balance - lockedFunds >= value,
             "DAO: insufficient balance!"
@@ -163,7 +174,7 @@ contract DAO is ERC20, ERC20Burnable, Ownable {
         require(id < proposals.length, "DAO: invalid proposal id!");
         Proposal memory proposal = proposals[id];
         require(
-            (proposal.votes / totalMembers) * 100 >= quorum,
+            (proposal.votes / totalMembers) * 100 + 1 > quorum,
             "DAO: quorum has not been met!"
         );
         require(!proposal.isExecuted, "DAO: proposal already executed!");
@@ -177,8 +188,47 @@ contract DAO is ERC20, ERC20Burnable, Ownable {
             }("");
             require(success, "DAO: transfer failed!");
             lockedFunds -= proposal.value;
+        } else if (
+            keccak256(bytes(proposal.proposalType)) == keccak256(bytes("add"))
+        ) {
+            _add(proposal.receipient);
+        } else if (
+            keccak256(bytes(proposal.proposalType)) ==
+            keccak256(bytes("remove"))
+        ) {
+            _remove(proposal.receipient);
+        } else if (
+            keccak256(bytes(proposal.proposalType)) ==
+            keccak256(bytes("voteTime"))
+        ) {
+            _changeVoteTime(proposal.value);
+        } else if (
+            keccak256(bytes(proposal.proposalType)) ==
+            keccak256(bytes("quorum"))
+        ) {
+            _changeQuorum(proposal.value);
         }
 
         proposals[id].isExecuted = true;
+    }
+
+    function _add(address user) private {
+        require(isMember(user) != true, "DAO: User is already a member");
+        _mint(user, 1 * 10**decimals());
+        totalMembers += 1;
+    }
+
+    function _remove(address user) private {
+        require(isMember(user) == true, "DAO: User is not a member");
+        _burn(user, 1 * 10**decimals());
+        totalMembers -= 1;
+    }
+
+    function _changeVoteTime(uint256 newVoteTime) private {
+        voteTime = newVoteTime;
+    }
+
+    function _changeQuorum(uint256 newQuorum) private {
+        quorum = newQuorum;
     }
 }
