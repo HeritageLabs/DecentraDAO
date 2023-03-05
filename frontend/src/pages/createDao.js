@@ -17,7 +17,7 @@ const CreateDao = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState(0);
 
-  const [membersWallet, setMembersWallet] = useState([{wallet: '', idx: 1}]);
+  const [membersWallet, setMembersWallet] = useState([{ wallet: '', idx: 1 }]);
   const handleChangeWalletAddr = (value, idx) => {
     const prevMembersWallet = [...membersWallet].flat();
     prevMembersWallet[idx].wallet = value;
@@ -33,8 +33,9 @@ const CreateDao = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      if ((fullName, votingTime, quorum, membersWallet[0]?.wallet)) {
-        const wallets = membersWallet ? membersWallet.map((w) => w?.wallet?.trim()) : [];
+      if ((fullName, votingTime, quorum)) {
+        const wallets = membersWallet.map((w) => w?.wallet?.trim());
+        console.log(wallets);
         const daoDetails = { name: fullName, voteTime: votingTime * 3600, quorum, members: wallets };
         console.log(daoDetails);
         await createDAO(daoDetails)
@@ -66,16 +67,16 @@ const CreateDao = () => {
           <span style={{ color: "#F7E427" }}>DAO here!</span>
         </Text>
         <CustomButton
-              bg="white"
-              hoverBg="brand.primary"
-              hoverColor="brand.white"
-              color="brand.primary"
-              border="1px solid white"
-              mt={{ base: "10px", lg: "1px" }}
-              href="/home"
-            >
-              Go back home
-            </CustomButton>
+          bg="white"
+          hoverBg="brand.primary"
+          hoverColor="brand.white"
+          color="brand.primary"
+          border="1px solid white"
+          mt={{ base: "10px", lg: "1px" }}
+          href="/home"
+        >
+          Go back home
+        </CustomButton>
       </Flex>
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} mt="30px" p={{ base: "5px 30px", lg: "15px 80px" }}>
@@ -84,7 +85,7 @@ const CreateDao = () => {
             Create New DAO
           </Text>
         </Box>
-        <Box  ml={{ base: "10px", lg: "0" }} w={{ base: "100%", lg: "80%" }}>
+        <Box ml={{ base: "10px", lg: "0" }} w={{ base: "100%", lg: "80%" }}>
           <form onSubmit={handleSubmit}>
             <TextInput
               type="text"
@@ -114,15 +115,15 @@ const CreateDao = () => {
             />
 
             <TextInput
-             type="text"
-             label="How many members do you want to add? (e.g 2)"
-             color="brand.dark"
-             placeholder="Enter number of members you want to add"
-             onChange={(e) => { if (e.target.value <= 20) setMembersWallet(Array.from({length: e.target.value}, (x, i) => [{idx: i+1, wallet: ''}].flat())); setMembers(e.target.value) }}
-             value={membersWallet.length === 0 ? null : membersWallet.length}
-             error={members > 20 && 'Input must not be greater than 20'}
+              type="text"
+              label="How many members do you want to add? (e.g 2)"
+              color="brand.dark"
+              placeholder="Enter number of members you want to add"
+              onChange={(e) => { if (e.target.value <= 20) setMembersWallet(Array.from({ length: e.target.value }, (x, i) => [{ idx: i + 1, wallet: '' }].flat())); setMembers(e.target.value) }}
+              value={membersWallet.length === 0 ? null : membersWallet.length}
+              error={members > 20 && 'Input must not be greater than 20'}
             />
-            
+
             {membersWallet.flat().map((wallet, index) => (
               <Box key={index}>
                 <TextInput
@@ -138,7 +139,7 @@ const CreateDao = () => {
                 />
               </Box>
             ))}
-            
+
             <CustomButton
               bg="brand.primary"
               hoverColor="brand.yellow"
