@@ -7,7 +7,6 @@ import SuccessModal from "../components/Modal/successModal";
 import { createDAO } from "../utils/cluster";
 import { toaster } from "evergreen-ui";
 import HeadTag from "../components/Common/headTag";
-import { TriangleDownIcon, CloseIcon } from "@chakra-ui/icons";
 
 const CreateDao = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -17,7 +16,7 @@ const CreateDao = () => {
   const [quorum, setQuorum] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState(0);
-
+  
   const [membersWallet, setMembersWallet] = useState([{wallet: '', idx: 1}]);
   const handleChangeWalletAddr = (value, idx) => {
     const prevMembersWallet = [...membersWallet].flat();
@@ -106,7 +105,7 @@ const CreateDao = () => {
             />
 
             <TextInput
-              type="text"
+              type="number"
               placeholder="Enter quorum in percentage"
               label="Quorum (%)"
               color="brand.dark"
@@ -115,7 +114,7 @@ const CreateDao = () => {
             />
 
             <TextInput
-             type="number"
+             type="text"
              label="How many members do you want to add? (e.g 2)"
              color="brand.dark"
              placeholder="Enter number of members you want to add"
@@ -147,7 +146,7 @@ const CreateDao = () => {
               border="1px solid #FAF9F7"
               mt="20px"
               w="100%"
-              disabled={!fullName || !votingTime || !quorum || !membersWallet[membersWallet.length - 1].wallet}
+              disabled={!fullName || !votingTime || !quorum || !members || membersWallet.length !== 0 && !membersWallet[membersWallet.length - 1].wallet}
               href="/home"
               isLoading={isLoading}
             >
