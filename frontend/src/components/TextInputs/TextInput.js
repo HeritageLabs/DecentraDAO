@@ -1,7 +1,7 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Flex, FormLabel, Input, Text } from "@chakra-ui/react";
 
-const TextInput = ({ placeholder, type, label, defaultValue, border, borderColor, color, isReadOnly, onChange, value, minLength, maxLength, error, hasCloseIcon, handleDelMember, wallet }) => {
+const TextInput = ({ placeholder, type, label, defaultValue, border, borderColor, color, isReadOnly, onChange, value, minLength, maxLength, error, hasCloseIcon, handleDelMember, wallet, onKeyUp }) => {
   return (
     <Box>
       <FormLabel color="brand.dark" fontSize="14px" fontWeight="300" mt="20px">
@@ -24,6 +24,7 @@ const TextInput = ({ placeholder, type, label, defaultValue, border, borderColor
           value={value}
           minLength={minLength}
           maxLength={maxLength}
+          onKeyUp={onKeyUp}
         />
         {hasCloseIcon && (wallet?.length > 1 && <CloseIcon ml="30px" cursor="pointer" _hover={{ color: 'brand.primary' }} boxSize="0.6em" onClick={handleDelMember} />)}
       </Flex>

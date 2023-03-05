@@ -16,7 +16,7 @@ const CreateDao = () => {
   const [votingTime, setVotingtime] = useState("");
   const [quorum, setQuorum] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const members = [1, 2, 3, 4, 5, 6, 7 , 8, 9, 10];
+  const [members, setMembers] = useState(0);
 
   const [membersWallet, setMembersWallet] = useState([{wallet: '', idx: 1}]);
   const handleChangeWalletAddr = (value, idx) => {
@@ -114,33 +114,15 @@ const CreateDao = () => {
               onChange={(e) => setQuorum(e.target.value)}
             />
 
-<FormLabel
-              color="brand.dark"
-              fontSize="14px"
-              fontWeight="300"
-              mt="20px"
-            >
-              How many members do you want to add?
-            </FormLabel>
-
-            <Select
-              mr="1px"
-              bg="#F2F2F2"
-              borderRadius="4px"
-              fontSize="16px"
-              fontWeight="500"
-              iconSize="10px"
-              color="brand.dark"
-              _focus={{ border: "#1C1CFF" }}
-              icon={<TriangleDownIcon />}
-              onChange={(e) => setMembersWallet(Array.from({length: e.target.value}, (x, i) => [{idx: i+1, wallet: ''}].flat())) }
-              data-testid="select"
-              value={membersWallet.length}
-            >
-              {members.map((value) => (
-               <option value={value}>{value}</option>
-              ))}
-            </Select>
+            <TextInput
+             type="number"
+             label="How many members do you want to add? (e.g 2)"
+             color="brand.dark"
+             placeholder="Enter number of members you want to add"
+             onChange={(e) => { if (e.target.value <= 20) setMembersWallet(Array.from({length: e.target.value}, (x, i) => [{idx: i+1, wallet: ''}].flat())); setMembers(e.target.value) }}
+             value={membersWallet.length === 0 ? null : membersWallet.length}
+             error={members > 20 && 'Input must not be greater than 20'}
+            />
             
             {membersWallet.flat().map((wallet, index) => (
               <Box key={index}>
@@ -177,7 +159,7 @@ const CreateDao = () => {
 
       <SuccessModal
         isOpen={isOpen}
-        onClose={onClose}
+        // onClose={onClose}
         description="You have successfully created a DAO"
         message="DAO Successful!"
         cta="Save Content"
