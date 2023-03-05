@@ -18,7 +18,7 @@ const LandingPage = () => {
         mt="20px"
       >
         <Text>
-          Your Number 1 DAO tool on aetenity. Try it out today and see how it
+          Your Number 1 DAO tool on Fantom. Try it out today and see how it
           works
         </Text>
 

@@ -1,5 +1,5 @@
 import { Box, Divider, Flex, SimpleGrid, Text } from "@chakra-ui/react";
-import { Spinner } from "evergreen-ui";
+import { Spinner, toaster } from "evergreen-ui";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import HeadTag from "../components/Common/headTag";
@@ -31,8 +31,7 @@ const Dao = () => {
 
   const donate = async (amount = "1") => {
     setIsLoading(true)
-    await donateTo(dao.address, amount);
-    setIsLoading(false);
+    await donateTo(dao.address, amount).then(() => toaster.success('Successfully donated', { id: 'mess', duration: 2 })).catch((err) => toaster.danger(err.data.message)).finally(() => setIsLoading(false));
     init();
   }
 

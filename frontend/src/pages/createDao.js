@@ -1,4 +1,4 @@
-import { Box, Flex, SimpleGrid, Spinner, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, FormLabel, Select, SimpleGrid, Spinner, Text, useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
 import TextInput from "../components/TextInputs/TextInput";
 import CustomButton from "../components/CustomButton/customButton";
@@ -7,7 +7,7 @@ import SuccessModal from "../components/Modal/successModal";
 import { createDAO } from "../utils/cluster";
 import { toaster } from "evergreen-ui";
 import HeadTag from "../components/Common/headTag";
-import TextAreaInput from "../components/TextInputs/TextAreaInput";
+import { TriangleDownIcon, CloseIcon } from "@chakra-ui/icons";
 
 const CreateDao = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -15,34 +15,38 @@ const CreateDao = () => {
   const [fullName, setFullName] = useState("");
   const [votingTime, setVotingtime] = useState("");
   const [quorum, setQuorum] = useState("");
-  const [walletAddr, setWalletAddr] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const members = [1, 2, 3, 4, 5, 6, 7 , 8, 9, 10];
+
+  const [membersWallet, setMembersWallet] = useState([{wallet: '', idx: 1}]);
+  const handleChangeWalletAddr = (value, idx) => {
+    const prevMembersWallet = [...membersWallet].flat();
+    prevMembersWallet[idx].wallet = value;
+    setMembersWallet(prevMembersWallet);
+  };
+
+  const handleDelMember = (idx) => {
+    const newWallets = membersWallet.flat().filter((wallet) => wallet.idx !== idx);
+    setMembersWallet(newWallets)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      if ((fullName, votingTime, quorum, walletAddr)) {
-        let wallets = walletAddr.split(",");
-        wallets = wallets.map((w) => {
-          w = w.trim();
-          if (w) {
-            return w;
-          }
-        });
+      if ((fullName, votingTime, quorum, membersWallet[0]?.wallet)) {
+        const wallets = membersWallet.map((w) => w?.wallet?.trim());
         const daoDetails = { name: fullName, voteTime: votingTime * 3600, quorum, members: wallets };
         console.log(daoDetails);
         await createDAO(daoDetails)
-          .then((res) => console.log(res))
-          .catch((err) => console.log(err))
+          .then(() => onOpen())
+          .catch((err) => toaster.danger(err.message.slice(0, 26), { id: 'mess', duration: 2 }))
           .finally(() => setIsLoading(false));
-        onOpen();
       } else {
         toaster.danger("Error occured");
         setIsLoading(false);
       }
     } catch (error) {
-      console.log({ error });
       toaster.danger(error.message);
     }
   };
@@ -62,6 +66,17 @@ const CreateDao = () => {
           Decentralize your organization by creating a new{" "}
           <span style={{ color: "#F7E427" }}>DAO here!</span>
         </Text>
+        <CustomButton
+              bg="white"
+              hoverBg="brand.primary"
+              hoverColor="brand.white"
+              color="brand.primary"
+              border="1px solid white"
+              mt={{ base: "10px", lg: "1px" }}
+              href="/home"
+            >
+              Go back home
+            </CustomButton>
       </Flex>
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} mt="30px" p={{ base: "5px 30px", lg: "15px 80px" }} alignItems="center">
@@ -70,7 +85,7 @@ const CreateDao = () => {
             Create New DAO
           </Text>
         </Box>
-        <Box overflowY="scroll" ml={{ base: "10px", lg: "0" }} w={{ base: "100%", lg: "80%" }}>
+        <Box  ml={{ base: "10px", lg: "0" }} w={{ base: "100%", lg: "80%" }}>
           <form onSubmit={handleSubmit}>
             <TextInput
               type="text"
@@ -99,15 +114,50 @@ const CreateDao = () => {
               onChange={(e) => setQuorum(e.target.value)}
             />
 
-            <TextAreaInput
-              placeholder="All members wallet address(comma separated)"
-              label="Member's Wallet Address"
-              type="text"
+<FormLabel
               color="brand.dark"
-              value={walletAddr}
-              onChange={(e) => setWalletAddr(e.target.value)}
-            />
+              fontSize="14px"
+              fontWeight="300"
+              mt="20px"
+            >
+              How many members do you want to add?
+            </FormLabel>
 
+            <Select
+              mr="1px"
+              bg="#F2F2F2"
+              borderRadius="4px"
+              fontSize="16px"
+              fontWeight="500"
+              iconSize="10px"
+              color="brand.dark"
+              _focus={{ border: "#1C1CFF" }}
+              icon={<TriangleDownIcon />}
+              onChange={(e) => setMembersWallet(Array.from({length: e.target.value}, (x, i) => [{idx: i+1, wallet: ''}].flat())) }
+              data-testid="select"
+              value={membersWallet.length}
+            >
+              {members.map((value) => (
+               <option value={value}>{value}</option>
+              ))}
+            </Select>
+            
+            {membersWallet.flat().map((wallet, index) => (
+              <Box key={index}>
+                <TextInput
+                  placeholder="Paste member wallet address"
+                  label={`Member ${index + 1} Wallet Address`}
+                  type="text"
+                  color="brand.dark"
+                  value={wallet.wallet}
+                  onChange={(e) => handleChangeWalletAddr(e.target.value, index)}
+                  hasCloseIcon
+                  handleDelMember={() => handleDelMember(wallet.idx)}
+                  wallet={membersWallet}
+                />
+              </Box>
+            ))}
+            
             <CustomButton
               bg="brand.primary"
               hoverColor="brand.yellow"
@@ -115,7 +165,7 @@ const CreateDao = () => {
               border="1px solid #FAF9F7"
               mt="20px"
               w="100%"
-              disabled={!fullName || !votingTime || !quorum || !walletAddr}
+              disabled={!fullName || !votingTime || !quorum || !membersWallet[membersWallet.length - 1].wallet}
               href="/home"
               isLoading={isLoading}
             >
