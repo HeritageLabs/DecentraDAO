@@ -34,7 +34,7 @@ const CreateDao = () => {
     setIsLoading(true);
     try {
       if ((fullName, votingTime, quorum, membersWallet[0]?.wallet)) {
-        const wallets = membersWallet.map((w) => w?.wallet?.trim());
+        const wallets = membersWallet ? membersWallet.map((w) => w?.wallet?.trim()) : [];
         const daoDetails = { name: fullName, voteTime: votingTime * 3600, quorum, members: wallets };
         console.log(daoDetails);
         await createDAO(daoDetails)
