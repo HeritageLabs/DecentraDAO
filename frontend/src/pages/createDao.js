@@ -16,7 +16,7 @@ const CreateDao = () => {
   const [quorum, setQuorum] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState(0);
-  
+
   const [membersWallet, setMembersWallet] = useState([{wallet: '', idx: 1}]);
   const handleChangeWalletAddr = (value, idx) => {
     const prevMembersWallet = [...membersWallet].flat();
@@ -78,8 +78,8 @@ const CreateDao = () => {
             </CustomButton>
       </Flex>
 
-      <SimpleGrid columns={{ base: 1, lg: 2 }} mt="30px" p={{ base: "5px 30px", lg: "15px 80px" }} alignItems="center">
-        <Box>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} mt="30px" p={{ base: "5px 30px", lg: "15px 80px" }}>
+        <Box mt="80px">
           <Text fontSize={{ base: "25px", md: "50px" }} width="75%" fontWeight="bold">
             Create New DAO
           </Text>
